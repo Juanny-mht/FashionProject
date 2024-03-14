@@ -26,8 +26,9 @@ model Category{
 }
 
 model Stock{
+  id String @id @default(uuid())
   article Article @relation(fields: [articleId], references: [id])
-  articleId String @unique 
+  articleId String
   count Int
   size String
 }

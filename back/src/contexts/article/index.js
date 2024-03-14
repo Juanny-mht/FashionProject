@@ -22,13 +22,21 @@ router.get("/:id", async (req, res) => {
         where: {
             id: id,
         },
+        include: {
+            count: true,
+        },
     });
+    //delete count.ArticleId in response
+    for (const count of article.count) {
+        delete count.articleId;
+    }
     const category = await client.category.findUnique({
         where: {
             id: article.categoryId,
         },
     });
     article.category = category.name;
+    delete article.categoryId;
     res.status(200).json(article);
 });
 
