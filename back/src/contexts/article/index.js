@@ -3,6 +3,7 @@ const { client } = require("../../infrastructure/database/database");
 
 const router = Router();
 
+// Get all articles with pagination
 router.get("/", async (req, res) => {
     let { index, limit } = req.query;
     index = parseInt(index);
@@ -25,6 +26,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+//get detail for one article with id as param in
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const article = await client.article.findUnique({
@@ -36,22 +38,8 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.get("/:id/count", async (req, res) => {
-    const { id } = req.params;
-    const count = await client.author.findUnique({
-        where: {
-            articles: {
-                some: {
-                    id: id
-                }
-            }
-        }
-    });
-    res.status(200).json(count);
-}
-);
 
-
+//create a new article
 router.post("/", async (req, res) => {
     const { description, price, category } = req.body;
     try {
@@ -77,7 +65,7 @@ router.post("/", async (req, res) => {
 }
 );
 
-
+//create many articles
 router.post("/many", async (req, res) => {
     const articles = req.body;
     const newArticles = [];
@@ -111,6 +99,16 @@ router.post("/many", async (req, res) => {
     res.status(201).json({ message: "Les articles ont été créés avec succès.", newArticles });
 }
 );
-
+//delete an article
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+    await client.article.delete({
+        where: {
+            id: id,
+        },
+    });
+    res.status(204).end();
+}
+);
 
 module.exports = router;
