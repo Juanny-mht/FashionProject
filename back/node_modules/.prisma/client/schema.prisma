@@ -12,9 +12,23 @@ datasource db {
 
 model Article{
   id String @id @default(uuid())
+  description String
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId String @unique
+  count Stock[]
+  price Float
 }
 
 model Category{
   id String @id @default(uuid())
   name String 
+  articles Article[]
 }
+
+model Stock{
+  article Article @relation(fields: [articleId], references: [id])
+  articleId String @unique 
+  count Int
+  size String
+}
+
