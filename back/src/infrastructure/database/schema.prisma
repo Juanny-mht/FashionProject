@@ -14,7 +14,7 @@ model Article{
   id String @id @default(uuid())
   description String
   category Category @relation(fields: [categoryId], references: [id])
-  categoryId String @unique
+  categoryId String 
   count Stock[]
   price Float
 }
