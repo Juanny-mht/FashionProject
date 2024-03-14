@@ -34,6 +34,12 @@ router.get("/:id", async (req, res) => {
             id: id,
         },
     });
+    const category = await client.category.findUnique({
+        where: {
+            id: article.categoryId,
+        },
+    });
+    article.category = category.name;
     res.status(200).json(article);
 });
 
