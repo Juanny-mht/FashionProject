@@ -5,6 +5,14 @@ const router = Router();
 
 router.get("/", async (req, res) => {
     const articles = await client.article.findMany();
+    for (const article of articles) {
+        const category = await client.category.findUnique({
+            where: {
+                id: article.categoryId,
+            },
+        });
+        article.category = category.name;
+    }
     res.status(200).json(articles);
 });
 
@@ -15,6 +23,12 @@ router.get("/:id", async (req, res) => {
             id: id,
         },
     });
+    const category = await client.category.findUnique({
+        where: {
+            id: article.categoryId,
+        },
+    });
+    article.category = category.name;
     res.status(200).json(article);
 });
 
