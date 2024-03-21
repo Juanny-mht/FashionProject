@@ -4,8 +4,25 @@ const { client } = require("../../infrastructure/database/database");
 const router = Router();
 
 router.get("/", async (req, res) => {
-    const categories = await client.category.findMany();
-    res.status(200).json(categories);
+    let { index, limit } = req.query;
+    index = parseInt(index);
+    limit = parseInt(limit);
+
+    if (Object.keys(req.query).length === 0 ) {
+        const categories = await client.category.findMany({
+            include: { articles: true }
+        });
+        res.status(200).json(categories);
+    }else{
+        const categories = await client.category.findMany({
+            include: { articles: true },
+            skip: index,
+            take: limit
+        });
+
+        res.status(200).json(categories);
+    }
+
 });
 
 // calculate the number of products in each category and send the total number of products
