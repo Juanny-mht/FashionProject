@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
         });
         article.category = category.name;
     }
+    console.log("articles", articles);
     res.status(200).json(articles);
 });
 
