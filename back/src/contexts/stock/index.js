@@ -36,5 +36,16 @@ router.get("/", async (req, res) => {
     res.status(200).json(stocks);
 });
 
+//get all stocks by articleId
+router.get("/:articleId", async (req, res) => {
+    const { articleId } = req.params;
+    const stocks = await client.stock.findMany({
+        where: {
+            articleId: articleId,
+        },
+    });
+    res.status(200).json(stocks);
+});
+
 
 module.exports = router;
