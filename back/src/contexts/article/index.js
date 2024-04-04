@@ -3,28 +3,49 @@ const { client } = require("../../infrastructure/database/database");
 
 const router = Router();
 
-// Get all articles with pagination
+// Get all articles with pagination and category filter
 router.get("/", async (req, res) => {
-    let { index, limit } = req.query;
-    index = parseInt(index);
-    limit = parseInt(limit);
+    const query = {};
+    for (let key in req.query) {
+        query[key.toLowerCase()] = req.query[key];
+    }
 
-    console.log(index, limit);
-    if (Object.keys(req.query).length === 0 ) {
-        const articles = await client.article.findMany({
-            include: { category: true }
-        });
-        res.status(200).json(articles);
-    }else{
-        const articles = await client.article.findMany({
-            include: { category: true },
-            skip: index,
-            take: limit
-        });
+    let index = query.index ? parseInt(query.index) : null;
+    let limit = query.limit ? parseInt(query.limit) : null; 
+    let category = query.category ? query.category.toLowerCase() : null;
+
+    try {
+        let articles;
+        let whereClause = {};
+
+        if (category) {
+            whereClause.category = {
+                name: category
+            };
+        }
+
+        if (index != null && limit != null) {
+            articles = await client.article.findMany({
+                include: { category: true },
+                skip: index,
+                take: limit,
+                where: whereClause
+            });
+        } else {
+            articles = await client.article.findMany({
+                include: { category: true },
+                where: whereClause
+            });
+        }
 
         res.status(200).json(articles);
+    } catch (error) {
+        console.error("Error fetching articles:", error);
+        res.status(500).send("Une erreur s'est produite lors de la récupération des articles.");
     }
 });
+
+
 
 //get detail for one article with id as param in
 router.get("/:id", async (req, res) => {

@@ -3,6 +3,7 @@ const { client } = require("../../infrastructure/database/database");
 
 const router = Router();
 
+//seulement pagination dans category, voir s'il faut faire filtre
 router.get("/", async (req, res) => {
     let { index, limit } = req.query;
     index = parseInt(index);
