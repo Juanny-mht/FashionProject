@@ -44,7 +44,17 @@ router.get("/:articleId", async (req, res) => {
             articleId: articleId,
         },
     });
-    res.status(200).json(stocks);
+    //get the price of the article and add it in each stock object
+    const article = await client.article.findUnique({
+        where: {
+            id: articleId,
+        },
+    });
+    const price = article.price;
+    for (const stock of stocks) {
+        stock.price = price;
+    }
+    res.status(200).json({ stocks});
 });
 
 
