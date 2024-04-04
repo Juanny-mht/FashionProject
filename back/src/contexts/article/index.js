@@ -19,6 +19,16 @@ router.get("/", async (req, res) => {
         let whereClause = {};
 
         if (category) {
+            const existingCategory = await client.category.findUnique({
+                where: {
+                    name: category
+                }
+            });
+
+            if (!existingCategory) {
+                return res.status(500).send("La catégorie spécifiée n'existe pas.");
+            }
+
             whereClause.category = {
                 name: category
             };
@@ -46,10 +56,10 @@ router.get("/", async (req, res) => {
 });
 
 
-
 //get detail for one article with id as param in
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
+    try {
     const article = await client.article.findUnique({
         where: {
             id: id,
@@ -70,6 +80,11 @@ router.get("/:id", async (req, res) => {
     article.category = category.name;
     delete article.categoryId;
     res.status(200).json(article);
+    }
+    catch (error) {
+        console.error("Error fetching article:", error);
+        res.status(500).send("Une erreur s'est produite lors de la récupération de l'article.");
+    }
 });
 
 
@@ -123,26 +138,28 @@ router.post("/many", async (req, res) => {
             newArticles.push(newArticle);
         } catch (error) {
             console.error("Error creating article:", error);
-            // Si une erreur se produit lors de la création d'un article, vous pouvez ajouter une logique de gestion des erreurs ici
-            // Par exemple, vous pouvez envoyer une réponse d'erreur appropriée au client
             res.status(500).send("Une erreur s'est produite lors de la création d'un ou plusieurs articles.");
-            return; // Terminer la fonction pour éviter de créer des articles en double ou d'autres problèmes
+            return; 
         }
     }
-    
-    // Une fois que tous les articles ont été créés avec succès, vous pouvez envoyer une réponse indiquant que tout s'est bien passé
     res.status(201).json({ message: "Les articles ont été créés avec succès.", newArticles });
 }
 );
 //delete an article
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
+    try {
     await client.article.delete({
         where: {
             id: id,
         },
     });
     res.status(204).end();
+    }
+    catch (error) {
+        console.error("Error deleting article:", error);
+        res.status(500).send("Une erreur s'est produite lors de la suppression de l'article.");
+    }
 }
 );
 
