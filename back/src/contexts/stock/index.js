@@ -57,5 +57,33 @@ router.get("/:articleId", async (req, res) => {
     res.status(200).json({ stocks});
 });
 
+//modify the stock of an article by id and size
+router.put("/:articleId", async (req, res) => {
+    const { articleId } = req.params;
+    const { count, size } = req.body;
+    try {
+        const stock = await client.stock.updateMany({
+            where: {
+                articleId: articleId,
+                size: size,
+            },
+            data: {
+                count,
+            },
+        });
+        //print the new stock in response
+        const newStock = await client.stock.findMany({
+            where: {
+                articleId: articleId,
+                size: size,
+            },
+        });
+        res.status(200).json(newStock);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+);
+
 
 module.exports = router;
