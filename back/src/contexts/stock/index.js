@@ -1,23 +1,41 @@
 const { Router } = require("express");
 const { client } = require("../../infrastructure/database/database");
+const validateMessage = require('../../validateMessageMiddleware');
 
 const router = Router();
 
 //create the stock of an article by id and quantity and size
+// create one or many stocks
 router.post("/", async (req, res) => {
-    const { articleId, count, size } = req.body;
+    //appel de la fonction validateMessage pour valider le body de la requête
     try {
-        const newStock = await client.stock.create({
-            data: {
-                articleId,
-                count,
-                size,
-            },
+        validateMessage('Stocks', req.body, () => {
+            console.log('Body is valid');
         });
-        res.status(201).json(newStock);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
+        return;
     }
+    const stocks = req.body;
+    const newStocks = [];
+    for (const stockData of stocks) {
+        const { articleId, count, size } = stockData;
+        try {
+            const newStock = await client.stock.create({
+                data: {
+                    articleId,
+                    count,
+                    size,
+                },
+            });
+            newStocks.push(newStock);
+        } catch (error) {
+            console.error("Error creating stock:", error);
+            res.status(500).send("Une erreur s'est produite lors de la création d'un ou plusieurs stocks.");
+            return;
+        }
+    }
+    res.status(201).json({ message: "Les stocks ont été créés avec succès.", newStocks });
 });
 
 //delete tous les stocks

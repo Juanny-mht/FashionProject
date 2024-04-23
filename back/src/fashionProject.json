@@ -1,0 +1,56 @@
+{
+    "categories": {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "name" : {
+                    "type" : "string"
+                }
+            }
+        }
+    }, 
+    "articles" : {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "description" : {
+                    "type" : "string"
+                },
+                "price" : {
+                    "type" : "number"
+                },
+                "category" : {
+                    "type" : "object",
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        },
+                        "name" : {
+                            "type" : "string"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "stocks" : {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "articleId" : {
+                    "type" : "string"
+                },
+                "count" : {
+                    "type" : "number"
+                },
+                "size" : {
+                    "type" : "string", 
+                    "valid" : ["S", "M", "L", "XL"]
+                }
+            }
+        }
+    }
+}

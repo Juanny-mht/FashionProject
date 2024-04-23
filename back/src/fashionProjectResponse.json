@@ -1,0 +1,162 @@
+{
+    "allCategoriesResponse": {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                },
+                "name" : {
+                    "type" : "string"
+                },
+                "articles" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "id" : {
+                                "type" : "string"
+                            },
+                            "description" : {
+                                "type" : "string"
+                            },
+                            "categoryId" : {
+                                "type" : "string"
+                            },
+                            "price" : {
+                                "type" : "number"
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+    }, 
+    "allCategoriesResponseCount": {
+        "type" : "object", 
+        "properties" : {
+            "categories" : { 
+                "type" : "array",
+                "items" : {
+                    "type" : "object",
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        },
+                        "name" : {
+                            "type" : "string"
+                        },
+                        "articles" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "id" : {
+                                        "type" : "string"
+                                    },
+                                    "description" : {
+                                        "type" : "string"
+                                    },
+                                    "categoryId" : {
+                                        "type" : "string"
+                                    },
+                                    "price" : {
+                                        "type" : "number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } 
+            },
+            "count" : {
+                "type" : "number"
+            }
+        }
+    }, 
+    "categoryResponse" : {
+        "type" : "object",
+        "properties" : {
+            "id" : {
+                "type" : "string"
+            },
+            "name" : {
+                "type" : "string"
+            },
+            "articles" : {
+                "type" : "array",
+                "items" : {
+                    "type" : "object",
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        },
+                        "description" : {
+                            "type" : "string"
+                        },
+                        "categoryId" : {
+                            "type" : "string"
+                        },
+                        "price" : {
+                            "type" : "number"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "categoryResponseCount": {
+        "type" : "object", 
+        "properties" : {
+            "category" : { 
+                "type" : "object",
+                "properties" : {
+                    "id" : {
+                        "type" : "string"
+                    },
+                    "name" : {
+                        "type" : "string"
+                    },
+                    "articles" : {
+                        "type" : "array",
+                        "items" : {
+                            "type" : "object",
+                            "properties" : {
+                                "id" : {
+                                    "type" : "string"
+                                },
+                                "description" : {
+                                    "type" : "string"
+                                },
+                                "categoryId" : {
+                                    "type" : "string"
+                                },
+                                "price" : {
+                                    "type" : "number"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "count" : {
+                "type" : "number"
+            }
+        }
+    }, 
+    "newCategoryRequest": {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                },
+                "name" : {
+                    "type" : "string"
+                }
+            }
+        }
+    }
+}
