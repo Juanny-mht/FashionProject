@@ -1,6 +1,10 @@
 version: '3'
 services:
-  app:
-    image: fashionprojectstock
+  fashion_project_stock:
+    image: fashion_project_stock:latest
     ports:
       - "3002:3002"
+
+
+    
+
