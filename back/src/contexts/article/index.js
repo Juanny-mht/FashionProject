@@ -49,6 +49,16 @@ router.get("/", async (req, res) => {
             });
         }
 
+        try {
+            validateMessage('allArticlesResponse', articles, () => {
+                console.log('Body is valid');
+            });
+        }
+        catch (error) {
+            res.status(400).json({ message: error.message });
+            return;
+        }
+
         res.status(200).json(articles);
     } catch (error) {
         console.error("Error fetching articles:", error);
@@ -80,6 +90,17 @@ router.get("/:id", async (req, res) => {
     });
     article.category = category.name;
     delete article.categoryId;
+
+    try {
+        validateMessage('articleResponse', article, () => {
+            console.log('Body is valid');
+        });
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     res.status(200).json(article);
     }
     catch (error) {
@@ -93,7 +114,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la requête
     try {
-        validateMessage('Articles', req.body, () => {
+        validateMessage('articles', req.body, () => {
         console.log('Body is valid');
         });
     } catch (error) {
@@ -125,6 +146,17 @@ router.post("/", async (req, res) => {
             return; 
         }
     }
+
+    try {
+        validateMessage('newArticleRequest', { message: "Les articles ont été créés avec succès.", newArticles }, () => {
+            console.log('Body is valid');
+        });
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     res.status(201).json({ message: "Les articles ont été créés avec succès.", newArticles });
 }
 );

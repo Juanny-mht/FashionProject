@@ -52,5 +52,17 @@
                 }
             }
         }
+    },
+    "stockUpdate" : {
+        "type" : "object", 
+        "properties" : {
+            "count" : {
+                "type" : "number"
+            }, 
+            "size" : {
+                "type" : "string", 
+                "valid" : ["S", "M", "L", "XL"]
+            }
+        }
     }
 }

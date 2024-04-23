@@ -9,7 +9,7 @@ const router = Router();
 router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la requête
     try {
-        validateMessage('Stocks', req.body, () => {
+        validateMessage('stocks', req.body, () => {
             console.log('Body is valid');
         });
     } catch (error) {
@@ -35,6 +35,16 @@ router.post("/", async (req, res) => {
             return;
         }
     }
+
+    try {
+        validateMessage('newStockRequest', { message: "Les stocks ont été créés avec succès.", newStocks }, () => {
+            console.log('Response is valid');
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     res.status(201).json({ message: "Les stocks ont été créés avec succès.", newStocks });
 });
 
@@ -51,6 +61,14 @@ router.delete("/", async (req, res) => {
 //get all stocks
 router.get("/", async (req, res) => {
     const stocks = await client.stock.findMany();
+    try {
+        validateMessage('allStocksResponse', stocks, () => {
+            console.log('Response is valid');
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
     res.status(200).json(stocks);
 });
 
@@ -72,13 +90,30 @@ router.get("/:articleId", async (req, res) => {
     for (const stock of stocks) {
         stock.price = price;
     }
-    res.status(200).json({ stocks});
+    try {
+        validateMessage('allStocksResponse', stocks, () => {
+            console.log('Response is valid');
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+    res.status(200).json(stocks);
 });
 
 //modify the stock of an article by id and size
 router.put("/:articleId", async (req, res) => {
     const { articleId } = req.params;
     const { count, size } = req.body;
+    try {
+        validateMessage('stockUpdate', req.body, () => {
+            console.log('Body is valid');
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     try {
         const stock = await client.stock.updateMany({
             where: {
@@ -96,6 +131,15 @@ router.put("/:articleId", async (req, res) => {
                 size: size,
             },
         });
+        try {
+            validateMessage('allStocksResponse', newStock, () => {
+                console.log('Response is valid');
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+            return;
+        }
+
         res.status(200).json(newStock);
     } catch (error) {
         res.status(500).json({ message: error.message });
