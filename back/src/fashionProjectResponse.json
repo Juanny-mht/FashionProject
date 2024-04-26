@@ -1,0 +1,308 @@
+{
+    "allCategoriesResponse": {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                },
+                "name" : {
+                    "type" : "string"
+                },
+                "articles" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "id" : {
+                                "type" : "string"
+                            },
+                            "description" : {
+                                "type" : "string"
+                            },
+                            "categoryId" : {
+                                "type" : "string"
+                            },
+                            "price" : {
+                                "type" : "number"
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+    }, 
+    "allCategoriesResponseCount": {
+        "type" : "object", 
+        "properties" : {
+            "categories" : { 
+                "type" : "array",
+                "items" : {
+                    "type" : "object",
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        },
+                        "name" : {
+                            "type" : "string"
+                        },
+                        "articles" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "id" : {
+                                        "type" : "string"
+                                    },
+                                    "description" : {
+                                        "type" : "string"
+                                    },
+                                    "categoryId" : {
+                                        "type" : "string"
+                                    },
+                                    "price" : {
+                                        "type" : "number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } 
+            },
+            "count" : {
+                "type" : "number"
+            }
+        }
+    }, 
+    "categoryResponse" : {
+        "type" : "object",
+        "properties" : {
+            "id" : {
+                "type" : "string"
+            },
+            "name" : {
+                "type" : "string"
+            },
+            "articles" : {
+                "type" : "array",
+                "items" : {
+                    "type" : "object",
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        },
+                        "description" : {
+                            "type" : "string"
+                        },
+                        "categoryId" : {
+                            "type" : "string"
+                        },
+                        "price" : {
+                            "type" : "number"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "categoryResponseCount": {
+        "type" : "object", 
+        "properties" : {
+            "category" : { 
+                "type" : "object",
+                "properties" : {
+                    "id" : {
+                        "type" : "string"
+                    },
+                    "name" : {
+                        "type" : "string"
+                    },
+                    "articles" : {
+                        "type" : "array",
+                        "items" : {
+                            "type" : "object",
+                            "properties" : {
+                                "id" : {
+                                    "type" : "string"
+                                },
+                                "description" : {
+                                    "type" : "string"
+                                },
+                                "categoryId" : {
+                                    "type" : "string"
+                                },
+                                "price" : {
+                                    "type" : "number"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "count" : {
+                "type" : "number"
+            }
+        }
+    }, 
+    "newCategoryRequest": {
+        "type" : "array",
+        "items" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                },
+                "name" : {
+                    "type" : "string"
+                }
+            }
+        }
+    }, 
+    "allArticlesResponse" : {
+        "type" : "array", 
+        "items" : {
+            "type": "object", 
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                }, 
+                "description" : {
+                    "type" : "string"
+                }, 
+                "categoryId" : {
+                    "type" : "string"
+                }, 
+                "price" : {
+                    "type" : "number"
+                }, 
+                "category" : {
+                    "type" : "object", 
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        }, 
+                        "name" : {
+                            "type" : "string"
+                        }
+                    }
+                }
+            }
+        }
+
+    }, 
+    "articleResponse" : {
+        "type" : "object", 
+        "properties" : {
+            "id" : {
+                "type" : "string"
+            },
+            "description" : {
+                "type" : "string"
+            }, 
+            "price" : {
+                "type" : "number"
+            }, 
+            "count" : {
+                "type" : "array"
+            }, 
+            "category" : {
+                "type" : "string"
+            }
+        }
+    }, 
+    "newArticleRequest" : {
+        "type" : "object", 
+        "properties" : {
+            "message" : {
+                "type" : "string"
+            },
+            "newArticles" : {
+                "type" : "array",
+                "items" : {
+                    "type" : "object", 
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        }, 
+                        "description" : {
+                            "type" : "string"
+                        }, 
+                        "categoryId" : {
+                            "type" : "string"
+                        }, 
+                        "price" : {
+                            "type" : "number"
+                        }, 
+                        "category" : {
+                            "type" : "object",
+                            "properties" : {
+                                "id" : {
+                                    "type" : "string"
+                                }, 
+                                "name" : {
+                                    "type" : "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }, 
+    "allStocksResponse" : {
+        "type" : "array", 
+        "items" : {
+            "type": "object", 
+            "properties" : {
+                "id" : {
+                    "type" : "string"
+                }, 
+                "articleId" : {
+                    "type" : "string"
+                }, 
+                "count" : {
+                    "type" : "number"
+                }, 
+                "size" : {
+                    "type" : "string",
+                    "valid" : ["S", "M", "L", "XL"]
+                }, 
+                "price" : {
+                    "type" : "number"
+                }
+            }
+        }
+    }, 
+    "newStockRequest" : {
+        "type" : "object", 
+        "properties" : {
+            "message" : {
+                "type" : "string"
+            },
+            "newStocks" : {
+                "type" : "array",
+                "items" : {
+                    "type" : "object", 
+                    "properties" : {
+                        "id" : {
+                            "type" : "string"
+                        }, 
+                        "articleId" : {
+                            "type" : "string"
+                        }, 
+                        "count" : {
+                            "type" : "number"
+                        }, 
+                        "size" : {
+                            "type" : "string",
+                            "valid" : ["S", "M", "L", "XL"]
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}

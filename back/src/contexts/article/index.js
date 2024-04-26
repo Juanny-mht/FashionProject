@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { client } = require("../../infrastructure/database/database");
+const validateMessage = require('../../validateMessageMiddleware');
 
 const router = Router();
 
@@ -48,6 +49,16 @@ router.get("/", async (req, res) => {
             });
         }
 
+        try {
+            validateMessage('allArticlesResponse', articles, () => {
+                console.log('Body is valid');
+            });
+        }
+        catch (error) {
+            res.status(400).json({ message: error.message });
+            return;
+        }
+
         res.status(200).json(articles);
     } catch (error) {
         console.error("Error fetching articles:", error);
@@ -79,6 +90,17 @@ router.get("/:id", async (req, res) => {
     });
     article.category = category.name;
     delete article.categoryId;
+
+    try {
+        validateMessage('articleResponse', article, () => {
+            console.log('Body is valid');
+        });
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     res.status(200).json(article);
     }
     catch (error) {
@@ -88,35 +110,17 @@ router.get("/:id", async (req, res) => {
 });
 
 
-
-//create a new article
-router.post("/", async (req, res) => {
-    const { description, price, category } = req.body;
-    try {
-        const newArticle = await client.article.create({
-            data: {
-                description,
-                price,
-                category: {
-                    connect: {
-                        id: category.id,
-                    }
-                }
-            },
-            include: {
-                category: true,
-            },
-        });
-        res.status(201).json(newArticle);
-    } catch (error) {
-        console.error("Error creating article:", error);
-        res.status(500).send("Une erreur s'est produite lors de la création de l'article.");
-    }
-}
-);
-
 //create many articles
-router.post("/many", async (req, res) => {
+router.post("/", async (req, res) => {
+    //appel de la fonction validateMessage pour valider le body de la requête
+    try {
+        validateMessage('articles', req.body, () => {
+        console.log('Body is valid');
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
     const articles = req.body;
     const newArticles = [];
     for (const articleData of articles) {
@@ -142,6 +146,17 @@ router.post("/many", async (req, res) => {
             return; 
         }
     }
+
+    try {
+        validateMessage('newArticleRequest', { message: "Les articles ont été créés avec succès.", newArticles }, () => {
+            console.log('Body is valid');
+        });
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+        return;
+    }
+
     res.status(201).json({ message: "Les articles ont été créés avec succès.", newArticles });
 }
 );
