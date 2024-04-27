@@ -2,11 +2,11 @@ const { Router } = require("express");
 
 const router = Router();
 
-router.use("/categories", require("./category"));
+router.use("/category", require("./category"));
 
-router.use("/articles", require("./article"));
+router.use("/article", require("./article"));
 
-router.use("/stocks", require("./stock"));
+router.use("/stock", require("./stock"));
 
 
 module.exports = router;

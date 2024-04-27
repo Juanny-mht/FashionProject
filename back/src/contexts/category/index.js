@@ -4,7 +4,6 @@ const validateMessage = require('../../validateMessageMiddleware');
 
 const router = Router();
 
-//seulement pagination dans category, voir s'il faut faire filtre
 router.get("/", async (req, res) => {
     let { index, limit } = req.query;
     index = parseInt(index);
@@ -17,10 +16,10 @@ router.get("/", async (req, res) => {
         // validation de la requête de sortie
         try {
             validateMessage('allCategoriesResponse', categories, () => {
-                console.log('Body is valid');
+                console.log('Response is valid');
             });
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            res.status(500).json({ message: error.message });
             return;
         }
         res.status(200).json(categories);
@@ -33,10 +32,10 @@ router.get("/", async (req, res) => {
         // validation de la requête de sortie
         try {
             validateMessage('allCategoriesResponse', categories, () => {
-                console.log('Body is valid');
+
             });
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            res.status(500).send("Error fetching category");
             return;
         }
 
@@ -46,6 +45,7 @@ router.get("/", async (req, res) => {
 });
 
 // calculate the number of products in each category and send the total number of products
+/*
 router.get("/count", async (req, res) => {
     const categories = await client.category.findMany({
         include: {
@@ -72,6 +72,8 @@ router.get("/count", async (req, res) => {
     res.status(200).json({ categories, count });
 });
 
+*/
+
 // get category by id
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
@@ -81,10 +83,10 @@ router.get("/:id", async (req, res) => {
     });
     try {
         validateMessage('categoryResponse', category, () => {
-            console.log('Body is valid');
+            console.log('Response is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error fetching category");
         return;
     }
     res.status(200).json(category);
@@ -102,7 +104,7 @@ router.get("/name/:name", async (req, res) => {
             console.log('Body is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error fetching category");
         return;
     }
     res.status(200).json(category);
@@ -121,16 +123,14 @@ router.get("/count/:id", async (req, res) => {
             },
         },
     });
-    let count = category.articles.length;
-    try {
-        // validateMessage('categoryResponseCount', {category, count}, () => {
-        //     console.log('Body is valid');
-        // });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    if (category === null) {
+        res.status(500).send("Error fetching Category");
         return;
     }
-    res.status(200).json({ category, count });
+    else{
+    let count = category.articles.length;
+        res.status(200).json({ category, count });
+    }
 });
 
 // get category by name and send count of products
@@ -146,17 +146,17 @@ router.get("/count/name/:name", async (req, res) => {
             },
         },
     });
-    let count = category.articles.length;
     try {
+        let count = category.articles.length;
         validateMessage('categoryResponseCount', {category, count}, () => {
-            console.log('Body is valid');
+        console.log('Body is valid');
+        res.status(200).json({ category, count });
         });
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error fetching Category");
         return;
     }
-    res.status(200).json({ category, count });
 });
 
 //create multiple categories
@@ -167,7 +167,7 @@ router.post("/", async (req, res) => {
             console.log('Body is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).send("Error creating Category");
         return;
     }
     const categories = req.body;
@@ -182,7 +182,7 @@ router.post("/", async (req, res) => {
             newCategories.push(category);
         } catch (error) {
             console.error("Error creating category:", error);
-            res.status(500).send("Une erreur s'est produite lors de la création d'une ou plusieurs catégories. Vérifiez si les catégories existent déjà.");
+            res.status(500).send("Error Existing Category");
             return;
         }
     }
@@ -208,7 +208,7 @@ router.delete("/:id", async (req, res) => {
         });
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send("Error deleting category");
     }
 });
 
@@ -221,7 +221,7 @@ router.delete("/name/:name", async (req, res) => {
         });
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send("Error deleting category");
     }
 });
 

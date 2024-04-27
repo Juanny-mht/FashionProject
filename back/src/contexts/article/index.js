@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
     let index = query.index ? parseInt(query.index) : null;
     let limit = query.limit ? parseInt(query.limit) : null; 
-    let category = query.category ? query.category.toLowerCase() : null;
+    let category = query.category ? query.category : null;
 
     try {
         let articles;
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
             });
 
             if (!existingCategory) {
-                return res.status(500).send("La catégorie spécifiée n'existe pas.");
+                return res.status(400).send("Error : Article category does not exist.");
             }
 
             whereClause.category = {
@@ -51,18 +51,17 @@ router.get("/", async (req, res) => {
 
         try {
             validateMessage('allArticlesResponse', articles, () => {
-                console.log('Body is valid');
+                console.log('Response is valid');
             });
         }
         catch (error) {
-            res.status(400).json({ message: error.message });
+            res.status(500).send();
             return;
         }
 
         res.status(200).json(articles);
     } catch (error) {
-        console.error("Error fetching articles:", error);
-        res.status(500).send("Une erreur s'est produite lors de la récupération des articles.");
+        res.status(500).send();
     }
 });
 
@@ -93,11 +92,11 @@ router.get("/:id", async (req, res) => {
 
     try {
         validateMessage('articleResponse', article, () => {
-            console.log('Body is valid');
+            console.log('Response is valid');
         });
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error : fetching article failed.");
         return;
     }
 
@@ -105,7 +104,8 @@ router.get("/:id", async (req, res) => {
     }
     catch (error) {
         console.error("Error fetching article:", error);
-        res.status(500).send("Une erreur s'est produite lors de la récupération de l'article.");
+        res.status(500).send("Error : fetching article failed.");
+        return;
     }
 });
 
@@ -118,7 +118,7 @@ router.post("/", async (req, res) => {
         console.log('Body is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).send("Error creating article");
         return;
     }
     const articles = req.body;
@@ -126,6 +126,18 @@ router.post("/", async (req, res) => {
     for (const articleData of articles) {
         const { description,  price, category} = articleData;
         try {
+            //verifier d'abord si l'article existe deja avant de le creer
+            const existingArticle = await client.article.findFirst({
+                where: {
+                    description: description,
+                    price: price,
+                    category : category
+                },
+            });
+            if (existingArticle) {
+                res.status(500).send("Error : Article(s) existing");
+                return;
+            }
             const newArticle = await client.article.create({
                 data: {
                     description,
@@ -142,7 +154,7 @@ router.post("/", async (req, res) => {
             newArticles.push(newArticle);
         } catch (error) {
             console.error("Error creating article:", error);
-            res.status(500).send("Une erreur s'est produite lors de la création d'un ou plusieurs articles.");
+            res.status(500).send("Error creating article");
             return; 
         }
     }
@@ -153,11 +165,11 @@ router.post("/", async (req, res) => {
         });
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error creating article");
         return;
     }
 
-    res.status(201).json({ message: "Les articles ont été créés avec succès.", newArticles });
+    res.status(201).send("Article(s) created");
 }
 );
 //delete an article
@@ -173,7 +185,7 @@ router.delete("/:id", async (req, res) => {
     }
     catch (error) {
         console.error("Error deleting article:", error);
-        res.status(500).send("Une erreur s'est produite lors de la suppression de l'article.");
+        res.status(500).send("Error deleting article");
     }
 }
 );
