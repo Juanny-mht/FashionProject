@@ -1,5 +1,5 @@
 # Start image with a node base image
-FROM node:18.17.1
+FROM node:18.17.1-alpine
 
 # The /app directory should act as the main application directory
 WORKDIR /app
