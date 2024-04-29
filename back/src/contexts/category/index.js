@@ -1,9 +1,23 @@
 const { Router } = require("express");
 const { client } = require("../../infrastructure/database/database");
 const validateMessage = require('../../validateMessageMiddleware');
+const e = require("express");
 
 const router = Router();
 
+/**
+ * @swagger
+ * /category:
+ * get:
+ * description: Get all categories from the database
+ * responses:
+ * 200:
+ * description: Success
+ * 400:
+ * description: Error fetching category
+ * 500:
+ * description: Internal server error
+ */
 router.get("/", async (req, res) => {
     let { index, limit } = req.query;
     index = parseInt(index);
@@ -19,7 +33,8 @@ router.get("/", async (req, res) => {
                 console.log('Response is valid');
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).send();
+            console.log(error);
             return;
         }
         res.status(200).json(categories);
@@ -35,7 +50,8 @@ router.get("/", async (req, res) => {
 
             });
         } catch (error) {
-            res.status(500).send("Error fetching category");
+            res.status(500).send();
+            console.log(error);
             return;
         }
 
@@ -44,97 +60,131 @@ router.get("/", async (req, res) => {
 
 });
 
-// calculate the number of products in each category and send the total number of products
-/*
-router.get("/count", async (req, res) => {
-    const categories = await client.category.findMany({
-        include: {
-            articles: {
-                select: {
-                    id: true,
-                },
-            },
-        },
-    });
-    let count = 0;
-    categories.forEach((category) => {
-        count += category.articles.length;
-    });
+/**
+ * @swagger
+ * /category/{id}:
+ * get:
+ * description: Get a category by id from the database
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
+router.get("/:id", async (req, res) => {
     try {
-        validateMessage('allCategoriesResponseCount', {categories, count}, () => {
-            console.log('Body is valid');
+        const { id } = req.params;
+        const category = await client.category.findUnique({
+            where: { id: id },
+            include: { articles: true },
         });
+        try {
+            validateMessage('categoryResponse', category, () => {
+                console.log('Response is valid');
+            });
+        } catch (error) {
+            res.status(500).send();
+            console.log(error);
+            return;
+        }
+        res.status(200).json(category);
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
-        return;
+        res.status(500).send();
+        console.log(error);
     }
-    res.status(200).json({ categories, count });
 });
 
-*/
-
-// get category by id
-router.get("/:id", async (req, res) => {
-    const { id } = req.params;
-    const category = await client.category.findUnique({
-        where: { id: id },
-        include: { articles: true },
-    });
-    try {
-        validateMessage('categoryResponse', category, () => {
-            console.log('Response is valid');
-        });
-    } catch (error) {
-        res.status(500).send("Error fetching category");
-        return;
-    }
-    res.status(200).json(category);
-});
-
-// get category by name
+/**
+ * @swagger
+ * /category/name/{name}:
+ * get:
+ * description: Get a category by name from the database
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.get("/name/:name", async (req, res) => {
-    const { name } = req.params;
-    const category = await client.category.findUnique({
-        where: { name: name },
-        include: { articles: true },
-    });
     try {
-        validateMessage('categoryResponse', category, () => {
-            console.log('Body is valid');
+        const { name } = req.params;
+        const category = await client.category.findUnique({
+            where: { name: name },
+            include: { articles: true },
         });
+        try {
+            validateMessage('categoryResponse', category, () => {
+                console.log('Body is valid');
+            });
+        } catch (error) {
+            res.status(500).send();
+            console.log(error);
+            return;
+        }
+        res.status(200).json(category);
     } catch (error) {
-        res.status(500).send("Error fetching category");
-        return;
+        res.status(500).send();
+        console.log(error);
     }
-    res.status(200).json(category);
 });
 
-// get category by id and send count of products
+/**
+ * @swagger
+ * /category/count/{id}:
+ * get:
+ * description: Get a category by id from the database and send count of products
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.get("/count/:id", async (req, res) => {
-    const { id } = req.params;
-    const category = await client.category.findUnique({
-        where: { id: id },
-        include: {
-            articles: {
-                select: {
-                    id: true,
+    try {
+        const { id } = req.params;
+        const category = await client.category.findUnique({
+            where: { id: id },
+            include: {
+                articles: {
+                    select: {
+                        id: true,
+                    },
                 },
             },
-        },
-    });
-    if (category === null) {
+        });
+        if (category === null) {
+            res.status(500).send("Error fetching Category");
+            return;
+        }
+        else{
+        let count = category.articles.length;
+            res.status(200).json({ category, count });
+            validateMessage('categoryResponseCount', {category, count}, () => {
+                console.log('Body is valid');
+            }
+        );
+        }
+    }
+    catch (error) {
         res.status(500).send("Error fetching Category");
         return;
     }
-    else{
-    let count = category.articles.length;
-        res.status(200).json({ category, count });
-    }
 });
 
-// get category by name and send count of products
+/**
+ * @swagger
+ * /category/count/name/{name}:
+ * get:
+ * description: Get a category by name from the database and send count of products
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.get("/count/name/:name", async (req, res) => {
+    try {
     const { name } = req.params;
     const category = await client.category.findUnique({
         where: { name: name },
@@ -157,9 +207,26 @@ router.get("/count/name/:name", async (req, res) => {
         res.status(500).send("Error fetching Category");
         return;
     }
+    }
+    catch (error) {
+        res.status(500).send("Error fetching Category");
+        return;
+    }
 });
 
-//create multiple categories
+/**
+ * @swagger
+ * /category:
+ * post:
+ * description: Create a new category
+ * responses:
+ * 201:
+ * description: Success
+ * 400:
+ * description: Error creating category
+ * 500:
+ * description: Internal server error
+ */
 router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la requête
     try {
@@ -189,17 +256,28 @@ router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la réponse
     try {
         validateMessage('newCategoryRequest', newCategories, () => {
-            console.log('Body is valid');
+            console.log('Response is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send();
+        console.log(error);
         return;
     }
 
     res.status(201).json(newCategories);
 });
 
-// delete category by id
+/**
+ * @swagger
+ * /category/{id}:
+ * delete:
+ * description: Delete a category by id
+ * responses:
+ * 204:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -212,7 +290,17 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
-// delete category by name
+/**
+ * @swagger
+ * /category/name/{name}:
+ * delete:
+ * description: Delete a category by name
+ * responses:
+ * 204:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.delete("/name/:name", async (req, res) => {
     const { name } = req.params;
     try {
