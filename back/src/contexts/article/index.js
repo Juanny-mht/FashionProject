@@ -4,7 +4,19 @@ const validateMessage = require('../../validateMessageMiddleware');
 
 const router = Router();
 
-// Get all articles with pagination and category filter
+/**
+ * @swagger
+ * /article:
+ *  get:
+ *  description: Get all articles from the database
+ * responses:
+ * 200:
+ * description: Success
+ * 400:
+ * description: Error : Article category does not exist.
+ * 500:
+ * description: Internal server error
+ */
 router.get("/", async (req, res) => {
     const query = {};
     for (let key in req.query) {
@@ -65,8 +77,17 @@ router.get("/", async (req, res) => {
     }
 });
 
-
-//get detail for one article with id as param in
+/**
+ * @swagger
+ * /article/{id}:
+ * get:
+ * description: Get an article by id from the database
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -96,7 +117,8 @@ router.get("/:id", async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).send("Error : fetching article failed.");
+        res.status(500).send();
+        console.log(error);
         return;
     }
 
@@ -109,8 +131,19 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-
-//create many articles
+/**
+ * @swagger
+ * /article:
+ * post:
+ * description: Create an article in the database
+ * responses:
+ * 201:
+ * description: Article(s) created
+ * 400:
+ * description: Error creating article
+ * 500:
+ * description: Internal server error
+ */
 router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la requête
     try {
@@ -135,7 +168,7 @@ router.post("/", async (req, res) => {
                 },
             });
             if (existingArticle) {
-                res.status(500).send("Error : Article(s) existing");
+                res.status(400).send("Error : Article(s) existing");
                 return;
             }
             const newArticle = await client.article.create({
@@ -165,14 +198,26 @@ router.post("/", async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).send("Error creating article");
+        res.status(500).send();
+        console.log(error);
         return;
     }
 
     res.status(201).send("Article(s) created");
 }
 );
-//delete an article
+
+/**
+ * @swagger
+ * /article/{id}:
+ * delete:
+ * description: Delete an article by id from the database
+ * responses:
+ * 204:
+ * description: Article deleted
+ * 500:
+ * description: Internal server error
+ */
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -181,11 +226,11 @@ router.delete("/:id", async (req, res) => {
             id: id,
         },
     });
-    res.status(204).end();
+    res.status(204).send();
     }
     catch (error) {
         console.error("Error deleting article:", error);
-        res.status(500).send("Error deleting article");
+        res.status(500).send();
     }
 }
 );

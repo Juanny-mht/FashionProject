@@ -4,8 +4,19 @@ const validateMessage = require('../../validateMessageMiddleware');
 
 const router = Router();
 
-//create the stock of an article by id and quantity and size
-// create one or many stocks
+/**
+ * @swagger
+ * /stock:
+ * post:
+ * description: Create new stocks
+ * responses:
+ * 201:
+ * description: Success
+ * 400:
+ * description: Error : Invalid request body.
+ * 500:
+ * description: Internal server error
+ */
 router.post("/", async (req, res) => {
     //appel de la fonction validateMessage pour valider le body de la requête avec JOI
     try {
@@ -14,6 +25,7 @@ router.post("/", async (req, res) => {
         });
     } catch (error) {
         res.status(400).send("Error : Invalid request body.");
+        console.log(error);
         return;
     }
     const stocks = req.body;
@@ -29,7 +41,7 @@ router.post("/", async (req, res) => {
                 },
             });
             if (existingStock) {
-                res.status(500).send("Error : Stock existing in article(s).");
+                res.status(400).send("Error : Stock existing in article(s).");
                 return;
             }
             const newStock = await client.stock.create({
@@ -41,7 +53,7 @@ router.post("/", async (req, res) => {
             });
             newStocks.push(newStock);
         } catch (error) {
-            res.status(400).send("Error creating stock");
+            res.status(500).send("Error creating stock");
             return;
         }
     }
@@ -52,23 +64,45 @@ router.post("/", async (req, res) => {
         });
     } catch (error) {
         res.status(500).send("Error creating stock");
+        console.log(error);
         return;
     }
 
     res.status(201).send("Les stocks ont été créés avec succès.");
 });
 
-//delete tous les stocks
+/**
+ * @swagger
+ * /stock:
+ * delete:
+ * description: Delete all stocks
+ * responses:
+ * 204:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.delete("/", async (req, res) => {
     try {
         await client.stock.deleteMany();
         res.status(204).send();
     } catch (error) {
         res.status(500).send("Error deleting articles");
+        console.log(error);
     }
 });
 
-//delete tous les stocks d'un article
+/**
+ * @swagger
+ * /stock/{articleId}:
+ * delete:
+ * description: Delete stocks by articleId
+ * responses:
+ * 204:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.delete("/:articleId", async (req, res) => {
     const { articleId } = req.params;
     try {
@@ -79,12 +113,22 @@ router.delete("/:articleId", async (req, res) => {
         });
     res.status(204).end();
     } catch (error) {
-        res.status(400).send("Error deleting articles");
+        res.status(500).send("Error deleting articles");
         return;
     }
 });
 
-//get all stocks
+/**
+ * @swagger
+ * /stock:
+ * get:
+ * description: Get all stocks
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ */
 router.get("/", async (req, res) => {
     const stocks = await client.stock.findMany();
     try {
@@ -92,14 +136,28 @@ router.get("/", async (req, res) => {
             console.log('Response is valid');
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send();
+        console.log(error);
         return;
     }
     res.status(200).json(stocks);
 });
 
-//get all stocks by articleId => error if articleId doesn't exist
+/**
+ * @swagger
+ * /stock/{articleId}:
+ * get:
+ * description: Get stocks by articleId
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ * 400:
+ * description: Error fetching stock
+ */
 router.get("/:articleId", async (req, res) => {
+    try {
     const { articleId } = req.params;
     const stocks = await client.stock.findMany({
         where: {
@@ -113,7 +171,7 @@ router.get("/:articleId", async (req, res) => {
         },
     });
     if (article === null) {
-        res.status(500).send("Error fetching stock");
+        res.status(400).send("Error fetching stock");
         return;
     }
     const price = article.price;
@@ -125,13 +183,30 @@ router.get("/:articleId", async (req, res) => {
             console.log('Response is valid');
         });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).send("Error fetching stock");
+        console.log(error);
         return;
     }
     res.status(200).json(stocks);
+    }
+    catch (error) {
+        res.status(500).send("Error fetching stock");
+    }
 });
 
-//modify the stock of an article by id and size
+/**
+ * @swagger
+ * /stock/{articleId}:
+ * put:
+ * description: Update stock by articleId
+ * responses:
+ * 200:
+ * description: Success
+ * 500:
+ * description: Internal server error
+ * 400:
+ * description: Error modifying stock
+ */
 router.put("/:articleId", async (req, res) => {
     const { articleId } = req.params;
     const { count, size } = req.body;
@@ -154,7 +229,7 @@ router.put("/:articleId", async (req, res) => {
             },
         });
         if (!existingStock) {
-            res.status(500).send("Error modifying stock");
+            res.status(400).send("Error modifying stock");
             return;
         }
         const stock = await client.stock.updateMany({
