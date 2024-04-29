@@ -4,6 +4,10 @@ services:
     image: fashion_project_stock:latest
     ports:
       - "3002:3002"
+  order:
+    image: fashion_project_order:latest
+    ports:
+      - "3000:3000"
 
 
     
