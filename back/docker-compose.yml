@@ -5,10 +5,9 @@ services:
     ports:
       - "3002:3002"
   order:
-    image: fashion_project_order:latest
+    image: fashion_project_orders:latest
     ports:
       - "3000:3000"
-
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     
-
