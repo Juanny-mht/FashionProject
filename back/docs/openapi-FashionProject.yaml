@@ -317,15 +317,6 @@ paths:
         required: true
         schema:
           type: string
-    delete:
-      description: Delete stocks by articleId
-      tags:
-        - stock
-      responses:
-        '204':
-          description: Success
-        '500':
-          description: Internal server error
     get:
       description: Get stocks by articleId
       tags:

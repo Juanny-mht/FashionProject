@@ -94,32 +94,6 @@ router.delete("/", async (req, res) => {
 
 /**
  * @swagger
- * /stock/{articleId}:
- * delete:
- * description: Delete stocks by articleId
- * responses:
- * 204:
- * description: Success
- * 500:
- * description: Internal server error
- */
-router.delete("/:articleId", async (req, res) => {
-    const { articleId } = req.params;
-    try {
-        await client.stock.delete({
-            where: {
-                articleId: articleId,
-            },
-        });
-    res.status(204).end();
-    } catch (error) {
-        res.status(500).send("Error deleting articles");
-        return;
-    }
-});
-
-/**
- * @swagger
  * /stock:
  * get:
  * description: Get all stocks
