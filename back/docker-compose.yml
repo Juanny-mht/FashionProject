@@ -1,11 +1,11 @@
 version: '3'
 services:
   stock:
-    image: fashion_project_stock:latest
+    image: juannymht/fashion_project_stock:latest
     ports:
       - "3002:3002"
   order:
-    image: fashion_project_orders:latest
+    image: juannymht/fashion_project_orders:latest
     ports:
       - "3000:3000"
     extra_hosts:
